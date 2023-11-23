@@ -122,8 +122,8 @@ public class Server extends Thread{
             remove(client);
         } else {
             if (input.startsWith("@")){
-                var name = input.substring(1, input.indexOf(" "));
-                var message = input.substring(input.indexOf(" ")+1);
+                String name = input.substring(1, input.indexOf(" "));
+                String message = input.substring(input.indexOf(" ")+1);
                 activeUsers.get(name).send("\n" + getClientName(client) + " says privately: " + message);
             }
             else {
