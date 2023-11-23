@@ -16,10 +16,21 @@ public class Reader extends Thread
     public synchronized void run() {
         System.out.print("Write 'Exit' to leave the group \n");
             Scanner scanner = new Scanner(System.in);
-        String message = scanner.nextLine();
-        if (message.equalsIgnoreCase("exit")) {
-            System.out.println("Exit has been requested" );
-            client.disconnect();
-        }
+            while (true) {
+                String message = scanner.nextLine();
+                if (message.equalsIgnoreCase("exit")) {
+                    System.out.println("Exit requested");
+                    client.exit();
+                    break;
+                }
+                if (message.equalsIgnoreCase("disconnect")) {
+                    System.out.println("Disconnect has been requested");
+                    client.disconnect();
+                }
+                if (message.equalsIgnoreCase("connect")) {
+                    System.out.println("Connect has been requested");
+                    client.connect();
+                }
+            }
     }
 }

@@ -3,11 +3,14 @@ package multicast.app.receiver;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 
 public class UDPMulticastClient {
     MulticastSocket ms ;
-    Thread reader, writer;
+    Reader reader;
+    Writer writer;
+    boolean isConnected = false;
     private static  final InetAddress GROUP;
 
     static {
@@ -21,7 +24,7 @@ public class UDPMulticastClient {
     public UDPMulticastClient() {
         try {
             ms = new MulticastSocket(4321);
-            ms.joinGroup(GROUP);
+            connect();
 
             reader = new Reader(this);
             writer = new Writer(ms);
@@ -38,25 +41,36 @@ public class UDPMulticastClient {
         public void disconnect()  {
             try {
                 ms.leaveGroup(GROUP);
+                isConnected=false;
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            reader.interrupt();
-            writer.interrupt();
-            try{
-                reader.join();
-                writer.join();
-                System.out.println("Threads are interrupted");
-            }catch (Exception e){
-                //
-            }
-            ms.close();
+
         }
 
     public static void main(String[] args) {
             UDPMulticastClient client = new UDPMulticastClient();
         }
+
+    public void exit() {
+        reader.interrupt();
+        writer.closeSocket();
+        writer.interrupt();
+        ms.close();
+
     }
+
+    public void connect() {
+        try {
+            if (!isConnected) {
+                ms.joinGroup(GROUP);
+                isConnected=true;
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
 
 
 
