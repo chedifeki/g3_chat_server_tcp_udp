@@ -5,7 +5,7 @@ import java.net.*;
 import java.util.*;
 
 
-class MessageSender implements Runnable {
+class MessageSender extends Thread {
     public final static int PORT = 7331;
     private DatagramSocket sock;
     private String hostname;
@@ -53,7 +53,8 @@ class MessageSender implements Runnable {
                     if ("exit".equalsIgnoreCase(message)) {
                         sendMessage("EXIT:" + ChatClient.name);
                         // Exit the MessageSender thread
-                        return;
+                        ChatClient.connected=false;
+                        this.interrupt();
                     } else if (message.startsWith("@")) {
                         String receiver = message.substring(0, message.indexOf(' '));
                         message = message.substring(message.indexOf(' '));
@@ -72,7 +73,7 @@ class MessageSender implements Runnable {
     }
 }
 
-class MessageReceiver implements Runnable {
+class MessageReceiver extends Thread {
     DatagramSocket sock;
     byte buf[];
 
@@ -92,11 +93,10 @@ class MessageReceiver implements Runnable {
                     System.out.println("Welcome " + ChatClient.name + " 🙂");
                 } else if (received.equals("NOT_AVAILABLE")) {
                     System.out.println("Username already exist 🙁 please choose new one ");
-                } else if (received.startsWith("EXIT:")) {
-                    String exitedUser = received.substring(received.indexOf(':') + 1);
-                    System.out.println("User " + exitedUser + " has left the room");
+                } else if (received.startsWith("EXIT")) {
+                    this.interrupt();
                     // Exit the MessageReceiver thread
-                    return;
+
                 } else {
                     System.out.println(received);
                 }
@@ -118,9 +118,13 @@ public class ChatClient {
         DatagramSocket socket = new DatagramSocket();
         MessageReceiver r = new MessageReceiver(socket);
         MessageSender s = new MessageSender(socket, host);
-        Thread rt = new Thread(r);
-        Thread st = new Thread(s);
-        rt.start();
-        st.start();
+        r.start();
+        s.start();
+
+
+
+        s.join();
+        r.join();
+        socket.close();
     }
 }

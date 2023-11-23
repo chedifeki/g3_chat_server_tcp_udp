@@ -94,6 +94,8 @@ public class ChatServer extends Thread {
 
                 if (content.startsWith("EXIT:")) {
                     String exitedUser = content.substring(content.indexOf(':') + 1);
+                    ClientInfo client = existingClients.get(exitedUser);
+                    socket.send(new DatagramPacket(content.getBytes(), content.length(), client.getInetAdr(), client.getPort()));
                     existingClients.remove(exitedUser);
                     System.out.println("User " + exitedUser + " has left the room");
                 }
