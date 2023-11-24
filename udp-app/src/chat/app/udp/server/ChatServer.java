@@ -26,9 +26,7 @@ public class ChatServer extends Thread {
                 Arrays.fill(buf, (byte) 0);
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 socket.receive(packet);
-                existingClients.forEach((key, value) -> {
-                    System.out.println(key + " recc " + value);
-                });
+
 
                 String content = new String(buf, 0, packet.getLength());
 

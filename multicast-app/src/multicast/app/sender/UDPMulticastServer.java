@@ -11,12 +11,9 @@ public class UDPMulticastServer {
     public static void sendUDPMessage(String message, String ipAddress, int port) throws IOException {
 
         try (DatagramSocket socket = new DatagramSocket(port)) {
-            System.out.println("message = " + message);
-            System.out.println(socket);
             InetAddress group = InetAddress.getByName(ipAddress);
             byte[] msg = message.getBytes();
             DatagramPacket packet = new DatagramPacket(msg, msg.length, group, 4321);
-            System.out.println(packet);
             socket.send(packet);
         }
     }

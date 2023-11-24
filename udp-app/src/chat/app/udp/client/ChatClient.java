@@ -46,6 +46,7 @@ class MessageSender extends Thread {
                 }
 
                 System.out.println("Start the chat or type 'exit' to leave:");
+                System.out.println("type @<username> in order to send a private message:");
 
                 String message;
                 do {

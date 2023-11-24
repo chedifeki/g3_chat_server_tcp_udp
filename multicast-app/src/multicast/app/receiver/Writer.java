@@ -22,7 +22,7 @@ public class Writer extends Thread {
     @Override
     public void run() {
         try {
-            System.out.println("Client is Listening.");
+
             byte[] buffer = new byte[2048];
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
